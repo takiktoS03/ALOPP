@@ -19,43 +19,44 @@
 //	umiejscowienie = para;
 //	wartosc = wart;
 //}
+
 E::E(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq)
 {
-	typ = this->typ;
-	miejsce = umiejscowienie;
-	wartosc = this->wartosc;
-	fi = this->fi;
-	freq = this->freq;
+	this->typ = typ;
+	umiejscowienie = miejsce;
+	this->wartosc = wartosc;
+	this->fi = fi;
+	this->freq = freq;
 }
 
 I::I(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq)
 {
-	typ = this->typ;
-	miejsce = umiejscowienie;
-	wartosc = this->wartosc;
-	fi = this->fi;
-	freq = this->freq;
+	this->typ = typ;
+	umiejscowienie = miejsce;
+	this->wartosc = wartosc;
+	this->fi = fi;
+	this->freq = freq;
 }
 
 R::R(char typ, std::pair<int, int> miejsce, double wartosc)
 {
-	typ = this->typ;
-	miejsce = umiejscowienie;
-	wartosc = this->wartosc;
+	this->typ = typ;
+	umiejscowienie = miejsce;
+	this->wartosc = wartosc;
 }
 
 C::C(char typ, std::pair<int, int> miejsce, double wartosc)
 {
-	typ = this->typ;
-	miejsce = umiejscowienie;
-	wartosc = this->wartosc;
+	this->typ = typ;
+	umiejscowienie = miejsce;
+	this->wartosc = wartosc;
 }
 
 L::L(char typ, std::pair<int, int> miejsce, double wartosc)
 {
-	typ = this->typ;
-	miejsce = umiejscowienie;
-	wartosc = this->wartosc;
+	this->typ = typ;
+	umiejscowienie = miejsce;
+	this->wartosc = wartosc;
 }
 
 E::~E() {};
@@ -64,27 +65,46 @@ R::~R() {};
 C::~C() {};
 L::~L() {};
 
-double E::wyznacz_Z(double& wartosc, double& freq)
+double E::czestotliwosc()
 {
-	return wartosc;
+	return E::freq;
 }
-double I::wyznacz_Z(double& wartosc, double& freq)
+double I::czestotliwosc()
 {
-	return wartosc;
+	return I::freq;
 }
-double R::wyznacz_Z(double& wartosc, double& freq)
+double R::czestotliwosc()
 {
-	return wartosc;
+	return NULL;
+}
+double C::czestotliwosc()
+{
+	return NULL;
+}
+double L::czestotliwosc()
+{
+	return NULL;
 }
 
-double C::wyznacz_Z(double& wartosc, double& freq)
+std::complex<double> E::wyznacz_Z(double& wartosc, double& freq)
 {
-	return (1 / (2 * M_PI * freq * wartosc));
+	return { 1,0 };
 }
-
-double L::wyznacz_Z(double& wartosc, double& freq)
+std::complex<double> I::wyznacz_Z(double& wartosc, double& freq)
 {
-	return (2 * M_PI * freq * wartosc);
+	return { 0,0 };
+}
+std::complex<double> R::wyznacz_Z(double& wartosc, double& freq)
+{
+	return { wartosc,0 };
+}
+std::complex<double> C::wyznacz_Z(double& wartosc, double& freq)
+{
+	return { 0,-1 / (2 * M_PI * freq * wartosc) + e };
+}
+std::complex<double> L::wyznacz_Z(double& wartosc, double& freq)
+{
+	return { 0,(2 * M_PI * freq * wartosc) };
 }
 
 //std::vector<E> E::odczyt_wejscia(const std::string& nazwa_pliku)

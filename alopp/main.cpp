@@ -43,30 +43,29 @@ int main(int liczba_param, char * param[])
 		//wypisz_elementy(elementy);
 		std::set<int> wezly = wektor_wezlow(elementy);
 		elementy = dodaj_rez_obok_sem(elementy, wezly);
-		double freq = czestotliwosc(elementy);
 		wezly = wektor_wezlow(elementy);
 		wypisz_elementy(elementy);
-
-		//element * wskaznik = new element();
-		//std::shared_ptr<element> wskaznik;
-		// 
-		//wypisz_wskazniki(elementy);
-		//element element;
-		/*E SEM;
-		I SPM;
-		R rezystor;
-		C kondensator;
-		L cewka;*/
-		//SEM.zrodlaE = SEM.odczyt_wejscia(plik_wejscia);
-		//wypisz_zrodla(SEM.zrodlaE);
-
-		/*std::pair<macierz, std::unordered_map<int, int>> uklad_rownan_i_mapa = coltri(elementy, wezly);
-		std::unordered_map<int, double> potencjaly = gauss(uklad_rownan_i_mapa, wezly);
+		double freq = 0;
+		for (auto& i : elementy)
+		{
+			if(i->typ=='E' || i->typ=='I')
+			{
+				freq = i->czestotliwosc();
+				break;
+			}
+		}
+		for (auto& i : elementy)
+		{
+			i->impedancja = i->wyznacz_Z(i->wartosc, freq);
+		}	
+		wypisz_elementy(elementy);
+		std::pair<macierz, std::unordered_map<int, int>> uklad_rownan_i_mapa = coltri(elementy, wezly);
+		std::unordered_map<int, std::complex<double>> potencjaly = gauss(uklad_rownan_i_mapa, wezly);
 		licz_prady(elementy, potencjaly);
 		licz_napiecia(elementy, potencjaly);
 		licz_moce(elementy);
-		zapis_wyjscia(plik_wyjscia, elementy);*/
-		/*std::cout << std::endl << "numery wezlow (stare + dodane rez): ";
+		zapis_wyjscia(plik_wyjscia, elementy);
+		std::cout << std::endl << "numery wezlow (stare + dodane rez): ";
 		for (auto& i : wezly)
 		{
 			std::cout << i << " ";
@@ -75,7 +74,7 @@ int main(int liczba_param, char * param[])
 		for (auto& i : potencjaly)
 		{
 			std::cout << i.first << ": " << i.second << "V ";
-		}*/
+		}
 	}
 	else
 	{

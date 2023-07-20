@@ -32,8 +32,6 @@ int main(int liczba_param, char* param[]);
 */
 std::vector<std::shared_ptr<element>> odczyt_wejscia(const std::string& nazwa_pliku);
 
-double czestotliwosc(const std::vector<std::shared_ptr<element>>& elementy);
-
 void wypisz_elementy(const std::vector<std::shared_ptr<element>>& elementy);
 
 /**
@@ -61,9 +59,9 @@ Funkcja tworzy takze mape wezlow na podstawie kontenera tworzonego w wektor_wezl
 @param [in] elementy Wektor elementow
 @param [in] wezly Kontener wezlow z obwodu
 */
-std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<element>& elementy, const std::set<int>& wezly);
+std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<std::shared_ptr<element>>& elementy, const std::set<int>& wezly);
 
-//void wypisz(const macierz& potencjaly);
+void wypisz(const macierz& potencjaly);
 
 /**
 @brief Funkcja oblicza macierz za pomoca metody eliminacji Gaussa-Jordana-Crouta.
@@ -75,7 +73,7 @@ Z tej postaci mozna wprost odczytac potencjaly w wezlach.
 @param [in] uklad_rownan_i_mapa Para macierzy i mapy stare2nowe
 @param [in] wezly Kontenera wezlow obwodu
 */
-std::unordered_map<int, double> gauss(const std::pair<macierz, std::unordered_map<int, int>>& uklad_rownan_i_mapa, const std::set<int>& wezly);
+std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std::unordered_map<int, int>>& uklad_rownan_i_mapa, const std::set<int>& wezly);
 
 /**
 @brief Funkcja oblicza prad na kazdym elemencie.
@@ -85,7 +83,7 @@ Jesli prad jest dodatni, to plynie od wezla poczatkowego do koncowego elementu. 
 @param [in] potencjaly Mapa potencjalow wezlowych
 @param [out] Zwraca wektor elementow uzupelniony o prad dla kazdego elementu
 */
-void licz_prady(std::vector<element>& elementy, std::unordered_map<int, double>& potencjaly);
+void licz_prady(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly);
 
 /**
 @brief Funkcja oblicza odlozone napiecie na kazdym elemencie.
@@ -94,7 +92,7 @@ void licz_prady(std::vector<element>& elementy, std::unordered_map<int, double>&
 @param [in] potencjaly Mapa potencjalow wezlowych
 @param [out] Zwraca wektor elementow uzupelniony o odlozone dla kazdego elementu
 */
-void licz_napiecia(std::vector<element>& elementy, std::unordered_map<int, double>& potencjaly);
+void licz_napiecia(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly);
 
 /**
 @brief Funkcja oblicza moc wydzielona na kazdym elemencie i bilans obwodu.
@@ -104,7 +102,7 @@ Funkcja oblicza bilans mocy na podstawie mocy oddanej lub pobranej dla kazdego e
 @param [in] elementy Wektor elementow
 @param [out] Zwraca wektor elementow uzupelniony o moc dla kazdego elementu
 */
-void licz_moce(std::vector<element>& elementy);
+void licz_moce(std::vector<std::shared_ptr<element>>& elementy);
 
 /**
 @brief Funkcja wypisuje do pliku wyjscia charakterystyke kazdego elementu.
@@ -113,6 +111,6 @@ Funkcja oblicza bilans mocy na podstawie mocy oddanej lub pobranej dla kazdego e
 @param [in] nazwa_pliku Nazwa pliku wyjsciowego
 @param [in] elementy Wektor elementow
 */
-void zapis_wyjscia(const std::string& nazwa_pliku, const std::vector<element>& elementy);
+void zapis_wyjscia(const std::string& nazwa_pliku, const std::vector<std::shared_ptr<element>>& elementy);
 
 #endif

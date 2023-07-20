@@ -30,23 +30,28 @@ Struktura przechowuje informacje o elemencie ukladu:
 //};
 
 typedef
-std::vector<std::vector<double>> macierz;
+std::vector<std::vector<std::complex<double>>> macierz;
+
+const double e = std::numeric_limits< double >::min();
 
 class element
 {
 	public:
 		char typ;
 		std::pair<int, int> umiejscowienie;
-		double wartosc, napiecie, prad, moc;
+		double wartosc;
+		std::complex<double> impedancja, napiecie, prad, moc;
 		//virtual double wyznacz_I();
-		virtual double wyznacz_Z(double& wartosc, double& freq) = 0;
+		virtual std::complex<double> wyznacz_Z(double& wartosc, double& freq) = 0;
+		virtual double czestotliwosc() = 0;
 };
 class E : public element
 {
 	public:
 		double fi, freq;
 		E(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq);
-		double wyznacz_Z(double& wartosc, double& freq);
+		std::complex<double> wyznacz_Z(double& wartosc, double& freq);
+		double czestotliwosc();
 		//std::complex<double> wyznacz_I() override;
 		~E();
 };
@@ -55,7 +60,8 @@ class I : public element
 	public:
 		double fi, freq;
 		I(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq);
-		double wyznacz_Z(double& wartosc, double& freq);
+		std::complex<double> wyznacz_Z(double& wartosc, double& freq);
+		double czestotliwosc();
 		//std::complex<double> wyznacz_I() override;
 		~I();
 };
@@ -63,7 +69,8 @@ class R : public element
 {
 	public:
 		R(char typ, std::pair<int, int> miejsce, double wartosc);
-		double wyznacz_Z(double& wartosc, double& freq);
+		std::complex<double> wyznacz_Z(double& wartosc, double& freq);
+		double czestotliwosc();
 		//std::complex<double> wyznacz_I() override;
 		~R();
 };
@@ -71,7 +78,8 @@ class C : public element
 {
 	public:
 		C(char typ, std::pair<int, int> miejsce, double wartosc);
-		double wyznacz_Z(double& wartosc, double& freq);
+		std::complex<double> wyznacz_Z(double& wartosc, double& freq);
+		double czestotliwosc();
 		//std::complex<double> wyznacz_I() override;
 		~C();
 };
@@ -79,7 +87,8 @@ class L : public element
 {
 	public:
 		L(char typ, std::pair<int, int> miejsce, double wartosc);
-		double wyznacz_Z(double& wartosc, double& freq);
+		std::complex<double> wyznacz_Z(double& wartosc, double& freq);
+		double czestotliwosc();
 		//std::complex<double> wyznacz_I() override;
 		~L();
 };
