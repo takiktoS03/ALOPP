@@ -17,6 +17,7 @@
 #include <cmath>
 #include <memory>
 #include <complex>
+#include <iomanip>
 
 #include "klasy.h"
 #include "funkcje.h"
@@ -43,12 +44,17 @@ std::vector<std::shared_ptr<element>> odczyt_wejscia(const std::string& nazwa_pl
 				if (typ == 'E' || typ == 'I')
 				{
 					ss >> fi >> frq;
+					if (frq <= 0)
+					{
+						//std::cout << "Zrodla musza miec czestotliwosc wieksza od zera!\n";
+						return elementy;
+					}
 					freq.push_back(frq);
 					for (auto& i : freq)
 					{
 						if (frq != i)
 						{
-							std::cout << "Zrodla nie moga miec tej roznej czestotliwosci w obwodzie!\n";
+							//std::cout << "Zrodla nie moga miec tej roznej czestotliwosci w obwodzie!\n";
 							return elementy;
 						}
 					}
@@ -69,14 +75,14 @@ std::vector<std::shared_ptr<element>> odczyt_wejscia(const std::string& nazwa_pl
 	return elementy;
 }
 
-void wypisz_elementy(const std::vector<std::shared_ptr<element>>& elementy)
-{
-	std::cout << std::endl;
-	for (auto& i : elementy)
-	{
-		std::cout << i->typ << " " << i->umiejscowienie.first << " " << i->umiejscowienie.second << " " << i->impedancja << std::endl;
-	}
-}
+//void wypisz_elementy(const std::vector<std::shared_ptr<element>>& elementy)
+//{
+//	std::cout << std::endl;
+//	for (auto& i : elementy)
+//	{
+//		std::cout << i->typ << " " << i->umiejscowienie.first << " " << i->umiejscowienie.second << " " << i->admitancja << std::endl;
+//	}
+//}
 
 std::set<int> wektor_wezlow(const std::vector<std::shared_ptr<element>>& elementy)
 {
@@ -85,7 +91,7 @@ std::set<int> wektor_wezlow(const std::vector<std::shared_ptr<element>>& element
 	{
 		wezly.insert(el->umiejscowienie.first);
 		wezly.insert(el->umiejscowienie.second);
-	}	
+	}
 	return wezly;
 }
 
@@ -132,13 +138,13 @@ std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<std::s
 		{
 			if ((j->typ == 'R' || j->typ == 'C' || j->typ == 'L') && j->umiejscowienie.first == iter->first)
 			{
-				wiersz[iter->second] += (j->impedancja);
-				wiersz[stare2nowe[j->umiejscowienie.second]] -= (j->impedancja);
+				wiersz[iter->second] += j->admitancja;
+				wiersz[stare2nowe[j->umiejscowienie.second]] -= j->admitancja;
 			}
 			else if ((j->typ == 'R' || j->typ == 'C' || j->typ == 'L') && j->umiejscowienie.second == iter->first)
 			{
-				wiersz[iter->second] += (j->impedancja);
-				wiersz[stare2nowe[j->umiejscowienie.first]] -= (j->impedancja);
+				wiersz[iter->second] += j->admitancja;
+				wiersz[stare2nowe[j->umiejscowienie.first]] -= j->admitancja;
 			}
 			else if (j->typ == 'E' && j->umiejscowienie.first == iter->first)
 			{
@@ -153,19 +159,11 @@ std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<std::s
 		}
 		for (auto& j : elementy)
 		{
-			if (j->typ == 'E' && j->umiejscowienie.first == iter->first)
+			if ((j->typ == 'E' || j->typ == 'I') && j->umiejscowienie.first == iter->first)
 			{
 				wiersz[stare2nowe.size()] += j->impedancja;
 			}
-			else if (j->typ == 'E' && j->umiejscowienie.second == iter->first)
-			{
-				wiersz[stare2nowe.size()] -= j->impedancja;
-			}
-			else if (j->typ == 'I' && j->umiejscowienie.first == iter->first)
-			{
-				wiersz[stare2nowe.size()] += j->impedancja;
-			}
-			else if (j->typ == 'I' && j->umiejscowienie.second == iter->first)
+			else if ((j->typ == 'E' || j->typ == 'I') && j->umiejscowienie.second == iter->first)
 			{
 				wiersz[stare2nowe.size()] -= j->impedancja;
 			}
@@ -174,99 +172,45 @@ std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<std::s
 		potencjaly.push_back(wiersz);
 		wiersz.clear();
 	}
-	wypisz(potencjaly);
+	//wypisz(potencjaly);
 	return {potencjaly, stare2nowe};
 }
 
-void wypisz(const macierz& macierz)
-{
-	std::vector<std::complex<double>> wiersz;
-	std::cout << std::endl << macierz.size() << " x " << macierz[0].size() << std::endl;
-	for (auto& i : macierz)
-	{
-		wiersz = i;
-		for (auto& j : wiersz)
-		{
-			std::cout << j << " ";
-		}
-		std::cout << std::endl;
-	}
-}
-
-
-void licz_prady(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly)
-{
-	std::complex<double> jeden = { 1,1 };
-	for (int i = 0; i < elementy.size(); i++)
-	{
-		if (elementy[i]->typ == 'R' || elementy[i]->typ == 'C' || elementy[i]->typ == 'L')
-		{
-			elementy[i]->prad = (potencjaly[elementy[i]->umiejscowienie.first] - potencjaly[elementy[i]->umiejscowienie.second]) / (jeden / elementy[i]->impedancja);
-		}
-		if (elementy[i]->typ == 'R' && elementy[i]->wartosc == -1)
-		{
-			elementy[i]->prad = (potencjaly[elementy[i]->umiejscowienie.second] - potencjaly[elementy[i]->umiejscowienie.first]) / (jeden / elementy[i]->impedancja);
-		}
-		if (elementy[i]->typ == 'I')
-		{
-			elementy[i]->prad = -elementy[i]->wartosc; // prad na zrodle SPM jest taki jak jego wartosc
-		}
-	}
-	for (int i = 0; i < elementy.size(); i++)
-	{
-		for (int j = 0; j < elementy.size(); j++)
-		{
-			if (elementy[i]->typ == 'E' && elementy[j]->typ == 'R' && elementy[j]->wartosc == -1 && elementy[i]->umiejscowienie.second == elementy[j]->umiejscowienie.second)
-			{
-				elementy[i]->prad = elementy[j]->prad; // prad na zrodle SEM jest taki jak prad do niego doplywajacy (z dodanego rezystora -1)
-				elementy[i]->umiejscowienie.second = elementy[j]->umiejscowienie.first; // zamiana numerow wezlow spowrotem
-			}
-		}
-	}
-}
-
-void licz_napiecia(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly)
-{
-	for (int i = 0; i < elementy.size(); i++)
-	{
-		if (elementy[i]->typ == 'R')
-		{
-			elementy[i]->napiecie = potencjaly[elementy[i]->umiejscowienie.first] - potencjaly[elementy[i]->umiejscowienie.second];
-		}
-		else if (elementy[i]->typ == 'I' || elementy[i]->typ == 'C' || elementy[i]->typ == 'L')
-		{
-			elementy[i]->napiecie = potencjaly[elementy[i]->umiejscowienie.first] - potencjaly[elementy[i]->umiejscowienie.second];
-		}
-		else if (elementy[i]->typ == 'E')
-		{
-			elementy[i]->napiecie = potencjaly[elementy[i]->umiejscowienie.first] - potencjaly[elementy[i]->umiejscowienie.second]; // napiecie na zrodle SEM jest taki jak jego wartosc
-		}
-	}
-}
-
-void licz_moce(std::vector<std::shared_ptr<element>>& elementy)
-{
-	for (auto& i : elementy)
-	{
-		i->moc = i->napiecie * i->prad;
-	}
-}
+//void wypisz(const macierz& macierz)
+//{
+//	std::vector<std::complex<double>> wiersz;
+//	std::cout << std::endl << macierz.size() << " x " << macierz[0].size() << std::endl;
+//	for (auto& i : macierz)
+//	{
+//		wiersz = i;
+//		for (auto& j : wiersz)
+//		{
+//			std::cout << j << " ";
+//		}
+//		std::cout << std::endl;
+//	}
+//}
 
 void zapis_wyjscia(const std::string& nazwa_pliku, const std::vector<std::shared_ptr<element>>& elementy)
 {
 	std::ofstream plik(nazwa_pliku);
 	if (plik)
 	{
-		std::complex<double> bilans = { 0,0 };
-		plik << "Elementy obwodu:" << std::endl << "TYP | WĘZEŁ POCZĄTKOWY | WĘZEŁ KOŃCOWY | WARTOŚĆ | PRĄD | NAPIĘCIE | MOC" << std::endl;
+		double bilans_czynnej = 0, bilans_biernej = 0;
+		plik << "Elementy obwodu:" << std::endl << "TYP | WĘZEŁ POCZĄTKOWY | WĘZEŁ KOŃCOWY | WARTOŚĆ | PRĄD | NAPIĘCIE | CZESTOTLIWOSC REZONANSOWA | MOC CZYNNA | MOC BIERNA" << std::endl;
 		for (auto& i : elementy)
 		{
 			if (i->typ == 'R' && i->wartosc == -1)
 				continue;
-			plik << i->typ << " " << i->umiejscowienie.first << " " << i->umiejscowienie.second << " " << i->wartosc << " " << i->prad << "A " << i->napiecie << "V " << i->moc << "W" << std::endl;
-			bilans += i->moc;
+			plik << std::setprecision(5) << i->typ << " " << i->umiejscowienie.first << " " << i->umiejscowienie.second << " " << i->wartosc << " "
+				//<< i->prad << " [A] " << i->napiecie << " [V] "
+				 << sqrt(pow(i->prad.real(), 2) + pow(i->prad.imag(), 2)) << "e^j(" << atan(imag(i->prad) / real(i->prad)) * 180 / M_PI << ") [A] "
+				 << sqrt(pow(i->napiecie.real(), 2) + pow(i->napiecie.imag(), 2)) << "e^j(" << atan(imag(i->napiecie) / real(i->napiecie)) * 180 / M_PI << ") [V] "
+				 << std::setprecision(8) << i->czest_rez << "Hz " << i->moc_czynna << "[W] " << i->moc_bierna << "[VA]" << std::endl;
+			bilans_czynnej += i->moc_czynna;
+			bilans_biernej += i->moc_bierna;
 		}
-		plik << "Bilans mocy układu: " << bilans << "W";
+		plik << "Bilans mocy układu (moc czynna, moc bierna): " << std::setprecision(4) << bilans_czynnej << "[W] " << bilans_biernej << "[VA]";
 		//std::cout << "Bilans mocy ukladu: " << bilans << "W";
 	}
 }

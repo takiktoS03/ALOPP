@@ -26,42 +26,43 @@ int main(int liczba_param, char* param[]);
 
 /** 
 @brief Funkcja odczytuje elementy z pliku tekstowego.
-@details na podstawie wprowadzonych danych w formacie <typ>,<wezel poczatkowy>,<wezel koncowy>,<wartosc>.
-@return std::vector<element> Wektor elementow
+@details Odczytuje na podstawie wprowadzonych danych w formacie <typ>,<wezel poczatkowy>,<wezel koncowy>,<wartosc>,<fi>,<freq>.
 @param [in] nazwa_pliku Nazwa pliku wejsciowego
+@return elementy Wektor elementow (wskaznikow na element)
 */
 std::vector<std::shared_ptr<element>> odczyt_wejscia(const std::string& nazwa_pliku);
 
-void wypisz_elementy(const std::vector<std::shared_ptr<element>>& elementy);
+//void wypisz_elementy(const std::vector<std::shared_ptr<element>>& elementy);
 
 /**
-@brief Funkcja tworzy kontener unikalnych wezlow z obwodu
+@brief Funkcja tworzy kontener unikalnych wezlow z obwodu.
 @details wpisujac kazdy wezel elementu w sposob posortowany od najmniejszych do najwiekszych wartosci.
-@return  Kontener wezlow obwodu
-@param [in] elementy Wektor elementow
+@return Kontener wezlow obwodu
+@param [in] elementy Wektor elementow (wskaznikow na element)
 */
 std::set<int> wektor_wezlow(const std::vector<std::shared_ptr<element>>& elementy);
 
 /**
-@brief Funkcja dodaje niwelujace sie rezystory na galaz z SEM.
+@brief Funkcja dodaje wirtualny rezystor na galaz obok SEM.
 @details Funkcja dodaje rezystor o wartosci -1 obok galezi ze zrodlem elektromotorycznym, aby pozniej traktowac galaz z SEM jako galaz z opornoscia 1 om.
-@return std::vector<element> Wektor elementow z nowymi ujemnymi rezystorami
-@param [in] elementy Wektor elementow
+@return  Wektor elementow (wskaznikow na element) z nowymi ujemnymi rezystorami
+@param [in] elementy Wektor elementow (wskaznikow na element)
+@param [in] Kontener wezlow obwodu
 */
 std::vector<std::shared_ptr<element>> dodaj_rez_obok_sem(std::vector<std::shared_ptr<element>>& elementy, const std::set<int>& wezly);
 
 /**
 @brief Funkcja tworzy macierz (uklad rownan) za pomoca metody Coltriego.
-@details Funkcja wprowadza do macierzy wspolczynniki kazdego potencjalu uzywajac metody potencjalow wezlowych.
-Napotkane galezie ze zrodlem elektromotorycznym traktuje jako galezie z opornoscia 1 om.
+@details Funkcja wprowadza do macierzy admitancje kazdego potencjalu uzywajac metody potencjalow wezlowych.
+Napotkane galezie ze zrodlem elektromotorycznym traktuje jako galezie z impedancja {1,0}om.
 Funkcja tworzy takze mape wezlow na podstawie kontenera tworzonego w wektor_wezlow(), tak aby zaczynaly sie od 0 do n.
-@return std::pair<macierz, std::unordered_map<int, int>> Para macierzy (wektora wektorow) i mapy stare2nowe
-@param [in] elementy Wektor elementow
+@return Para macierzy (wektora wektorow wskaznikow) i mapy stare2nowe
+@param [in] elementy Wektor elementow (wskaznikow na element)
 @param [in] wezly Kontener wezlow z obwodu
 */
 std::pair<macierz, std::unordered_map<int, int>> coltri(const std::vector<std::shared_ptr<element>>& elementy, const std::set<int>& wezly);
 
-void wypisz(const macierz& potencjaly);
+//void wypisz(const macierz& potencjaly);
 
 /**
 @brief Funkcja oblicza macierz za pomoca metody eliminacji Gaussa-Jordana-Crouta.
@@ -69,44 +70,16 @@ void wypisz(const macierz& potencjaly);
 Zamienia wiersze (rownanie) z innym wierszem, w ktorym wystepuje wiekszy wspolczynnik w kolumnie.
 Metoda ta sprowadza macierz rozszerzona ukladu rownan do postaci bazowej (macierzy jednostkowej).
 Z tej postaci mozna wprost odczytac potencjaly w wezlach.
-@return std::unordered_map<int, double> Mapa potencjalow w wezlach
+@return Mapa potencjalow w wezlach
 @param [in] uklad_rownan_i_mapa Para macierzy i mapy stare2nowe
 @param [in] wezly Kontenera wezlow obwodu
 */
 std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std::unordered_map<int, int>>& uklad_rownan_i_mapa, const std::set<int>& wezly);
 
 /**
-@brief Funkcja oblicza prad na kazdym elemencie.
-@details Wykorzystuje do tego obliczone wczesniej potencjaly w kazdym wezle obwodu.
-Jesli prad jest dodatni, to plynie od wezla poczatkowego do koncowego elementu. Jesli ujemny, to na odwrot.
-@param [in] elementy Wektor elementow
-@param [in] potencjaly Mapa potencjalow wezlowych
-@param [out] Zwraca wektor elementow uzupelniony o prad dla kazdego elementu
-*/
-void licz_prady(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly);
-
-/**
-@brief Funkcja oblicza odlozone napiecie na kazdym elemencie.
-@details Wykorzystuje do tego obliczony wczesniej prad (dla rezystora) lub mape potencjalow wezlowych dla zrodel.
-@param [in] elementy Wektor elementow
-@param [in] potencjaly Mapa potencjalow wezlowych
-@param [out] Zwraca wektor elementow uzupelniony o odlozone dla kazdego elementu
-*/
-void licz_napiecia(std::vector<std::shared_ptr<element>>& elementy, std::unordered_map<int, std::complex<double>>& potencjaly);
-
-/**
-@brief Funkcja oblicza moc wydzielona na kazdym elemencie i bilans obwodu.
-@details Wykorzystuje do tego obliczone wczesniej prad i napiecie na kazdym elemencie obwodu.
-Jesli moc jest dodatnia, to znaczy, ze element pobiera energie. Jesli ujemna, to znaczy, ze ja oddaje.
-Funkcja oblicza bilans mocy na podstawie mocy oddanej lub pobranej dla kazdego elementu.
-@param [in] elementy Wektor elementow
-@param [out] Zwraca wektor elementow uzupelniony o moc dla kazdego elementu
-*/
-void licz_moce(std::vector<std::shared_ptr<element>>& elementy);
-
-/**
 @brief Funkcja wypisuje do pliku wyjscia charakterystyke kazdego elementu.
 @details Funkcja wypisuje wszystkie elementy obwodu, ich parametry i bilans obwodu do pliku tekstowego.
+Prad oraz napiecie funkcja podaje w postaci modulu liczby zespolonej oraz wzoru Eulera na kat przesuniecia fazowego dla kazdego elementu
 Funkcja oblicza bilans mocy na podstawie mocy oddanej lub pobranej dla kazdego elementu.
 @param [in] nazwa_pliku Nazwa pliku wyjsciowego
 @param [in] elementy Wektor elementow

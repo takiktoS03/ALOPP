@@ -44,11 +44,10 @@ int main(int liczba_param, char * param[])
 		std::set<int> wezly = wektor_wezlow(elementy);
 		elementy = dodaj_rez_obok_sem(elementy, wezly);
 		wezly = wektor_wezlow(elementy);
-		wypisz_elementy(elementy);
 		double freq = 0;
 		for (auto& i : elementy)
 		{
-			if(i->typ=='E' || i->typ=='I')
+			if (i->typ == 'E' || i->typ == 'I')
 			{
 				freq = i->czestotliwosc();
 				break;
@@ -57,15 +56,31 @@ int main(int liczba_param, char * param[])
 		for (auto& i : elementy)
 		{
 			i->impedancja = i->wyznacz_Z(i->wartosc, freq);
-		}	
-		wypisz_elementy(elementy);
+			i->admitancja = i->wyznacz_Y();
+			i->czest_rez = i->wyznacz_czest_rez(elementy);
+		}
 		std::pair<macierz, std::unordered_map<int, int>> uklad_rownan_i_mapa = coltri(elementy, wezly);
 		std::unordered_map<int, std::complex<double>> potencjaly = gauss(uklad_rownan_i_mapa, wezly);
-		licz_prady(elementy, potencjaly);
-		licz_napiecia(elementy, potencjaly);
-		licz_moce(elementy);
+		for (auto& i : elementy)
+		{
+			if (i->typ == 'R')
+			{
+				i->wyznacz_I(elementy, potencjaly);
+				i->wyznacz_V(potencjaly);
+				i->wyznacz_moce();
+			}
+		}
+		for (auto& i : elementy)
+		{
+			if (i->typ != 'R')
+			{
+				i->wyznacz_I(elementy, potencjaly);
+				i->wyznacz_V(potencjaly);
+				i->wyznacz_moce();
+			}
+		}
 		zapis_wyjscia(plik_wyjscia, elementy);
-		std::cout << std::endl << "numery wezlow (stare + dodane rez): ";
+		/*std::cout << std::endl << "numery wezlow (stare + dodane rez): ";
 		for (auto& i : wezly)
 		{
 			std::cout << i << " ";
@@ -74,7 +89,7 @@ int main(int liczba_param, char * param[])
 		for (auto& i : potencjaly)
 		{
 			std::cout << i.first << ": " << i.second << "V ";
-		}
+		}*/
 	}
 	else
 	{

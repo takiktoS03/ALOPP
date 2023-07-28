@@ -15,13 +15,8 @@ std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std
 	macierz gauss = uklad_rownan_i_mapa.first;
 	std::unordered_map<int, std::complex<double>> nowe2stare;
 	std::unordered_map<int, int> stare2nowe = uklad_rownan_i_mapa.second;
-	std::complex<double> a, zero = { 0,0 }, jeden = { 1,1 };
-	std::size_t n = gauss.size();
-	/*std::vector<int> nr_wiersza;
-	for (int i = 0; i < n; i++)
-	{
-		nr_wiersza.push_back(i);
-	}*/
+	std::complex<double> a, zz = { 0,0 }, jz = { 1,0 }, zj = { 0,1 }, jj = { 1,1 };
+	int n = gauss.size();
 	for (int i = 0; i < n; i++)
 	{
 		int ielmax = i;// indeks wiersza, w ktorym znajduje sie element max
@@ -36,7 +31,7 @@ std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std
 		}
 		if (elmax == 0)
 		{
-			std::cout << "Macierz osobliwa (wyznacznik = 0), nie da sie obliczyc zmiennych\n";
+			//std::cout << "Macierz osobliwa (wyznacznik = 0), nie da sie obliczyc zmiennych\n";
 			return nowe2stare;
 		}
 		if (ielmax != i)
@@ -51,16 +46,16 @@ std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std
 		for (int j = i + 1; j < n; j++)
 		{// postepowanie proste gaussa
 			a = gauss[j][i] / gauss[i][i];
-			gauss[j][i] = 0;
+			gauss[j][i] = zz;
 			for (int k = i + 1; k <= n; k++)
 			{
 				gauss[j][k] -= a * gauss[i][k];
 			}
 		}
 	}
-	if (gauss[n - 1][n - 1] == zero)
+	if (gauss[n - 1][n - 1] == zz)
 	{
-		std::cout << "Macierz osobliwa, nie da sie obliczyc zmiennych\n"; // Nie mieszamy logiki aplikacji z interfejsem uzytkownika
+		//std::cout << "Macierz osobliwa, nie da sie obliczyc zmiennych\n"; // Nie mieszamy logiki aplikacji z interfejsem uzytkownika
 		return nowe2stare;
 	}
 	for (int i = n - 1; i > 0; i--)
@@ -76,16 +71,16 @@ std::unordered_map<int, std::complex<double>> gauss(const std::pair<macierz, std
 	}
 	for (int w = 0; w < n; w++)
 	{// normalizowanie wierszy
-		if (gauss[w][w] != jeden)
+		if (gauss[w][w] != jz)
 		{
-			a = jeden / gauss[w][w];
+			a = jz / gauss[w][w];
 			for (int j = 0; j <= n; j++)
 			{
 				gauss[w][j] *= a;
 			}
 		}
 	}
-	wypisz(gauss);
+	//wypisz(gauss);
 	//std::cout << std::endl;
 	std::vector<std::complex<double>> napiecia{ {0, 0} };
 	for (int i = 0; i < n; i++)
