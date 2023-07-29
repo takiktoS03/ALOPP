@@ -70,6 +70,7 @@ int main(int liczba_param, char * param[])
 				i->wyznacz_moce();
 			}
 		}
+		//tworzenie dwoch petli jest niezbedne aby prawidlowo obliczyc prad na zrodlach napieciowych, poniewaz bazuje on na rezystorze -1 dodanym do galezi z SEM
 		for (auto& i : elementy)
 		{
 			if (i->typ != 'R')

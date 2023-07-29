@@ -1,7 +1,2 @@
-﻿  funkcje.cpp
-  gauss.cpp
-C:\Users\KONKUTER\Desktop\vs ppk\1da2f8c2-gr62-repo\Projekt\alopp\gauss.cpp(19,8): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
-  klasy.cpp
-  main.cpp
-  Generowanie kodu...
-  alopp.vcxproj -> C:\Users\KONKUTER\Desktop\vs ppk\1da2f8c2-gr62-repo\Projekt\alopp\alopp\x64\Debug\alopp.exe
+﻿  main.cpp
+  alopp.vcxproj -> C:\Users\KONKUTER\Desktop\vs ppk\1da2f8c2-gr62-repo\ALOPP\alopp\alopp\x64\Debug\alopp.exe

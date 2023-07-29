@@ -89,7 +89,7 @@ Posiada dodatkowo zmienne double fi oznaczajaca przesuniecie fazowe zrodla oraz 
 */
 class E : public element
 {
-	public:
+	private:
 		double fi, freq;
 		/**
 		@brief Konstruktor tworzacy zrodlo SPM
@@ -99,6 +99,7 @@ class E : public element
 		@param fi Przesuniecie fazowe zrodla
 		@param freq Czestotliwosc pracy zrodla
 		*/
+	public:
 		E(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq);
 		/**
 		@brief Funkcja wyznaczajaca impedancje zrodla SEM 
@@ -156,7 +157,7 @@ Posiada dodatkowo zmienne double fi oznaczajaca przesuniecie fazowe zrodla oraz 
 */
 class I : public element
 {
-	public:
+	private:
 		double fi, freq;
 		/**
 		@brief Konstruktor tworzacy zrodlo SEM
@@ -166,6 +167,7 @@ class I : public element
 		@param fi Przesuniecie fazowe zrodla
 		@param freq Czestotliwosc pracy zrodla
 		*/
+	public:
 		I(char typ, std::pair<int, int> miejsce, double wartosc, double fi, double freq);
 		/**
 		@brief Funkcja wyznaczajaca impedancje zrodla SPM
