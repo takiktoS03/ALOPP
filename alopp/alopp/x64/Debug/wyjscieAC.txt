@@ -1,7 +1,0 @@
-Elementy obwodu:
-TYP | WĘZEŁ POCZĄTKOWY | WĘZEŁ KOŃCOWY | WARTOŚĆ | PRĄD | NAPIĘCIE | CZESTOTLIWOSC REZONANSOWA | MOC CZYNNA | MOC BIERNA
-E 1 4 42.426 0.3e^j(-45) [A] 42.426e^j(0) [V] 0Hz -8.9998177[W] -8.9998274[VA]
-R 1 2 100 0.3e^j(-45) [A] 30e^j(-45) [V] 0Hz 8.9998177[W] 0[VA]
-C 2 3 1e-05 0.3e^j(-45) [A] 30e^j(45) [V] 112.53954Hz -1.4472806e-15[W] -8.9998145[VA]
-L 3 4 0.2 0.3e^j(-45) [A] 59.999e^j(45) [V] 112.53954Hz 1.1021602e-15[W] 17.999642[VA]
-Bilans mocy układu (moc czynna, moc bierna): -1.194e-13[W] -3.553e-15[VA]
